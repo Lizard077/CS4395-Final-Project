@@ -52,6 +52,7 @@ def preprocess_data(raw_data):
             cleaned = clean_review(review)
             if cleaned:
                 rating = extract_rating(cleaned)
+                cleaned = re.sub(r'rating:\s*[a-fA-F][+-]?', '', cleaned, flags=re.IGNORECASE)
                 cleaned = re.sub(r'[^\w\s]', '', cleaned)
                 cleaned_reviews.append({"text": cleaned, "rating": rating})
 
@@ -68,6 +69,7 @@ def extract_rated_reviews(raw_data):
             cleaned = clean_review(review)
             rating = extract_rating(cleaned)
             if rating is not None:
+                cleaned = re.sub(r'rating:\s*[a-fA-F][+-]?', '', cleaned, flags=re.IGNORECASE)
                 cleaned  = re.sub(r'[^\w\s]', '', cleaned)
                 rated_reviews.append({"text": cleaned, "rating": rating})
     return rated_reviews
