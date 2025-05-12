@@ -59,6 +59,19 @@ def preprocess_data(raw_data):
             cleaned_data.append({"title": title, "reviews": cleaned_reviews})
     return cleaned_data
 
+def extract_rated_reviews(raw_data):
+    rated_reviews = []
+
+    for movie in raw_data:
+        reviews = movie.get("reviews", [])
+        for review in reviews:
+            cleaned = clean_review(review)
+            rating = extract_rating(cleaned)
+            if rating is not None:
+                cleaned  = re.sub(r'[^\w\s]', '', cleaned)
+                rated_reviews.append({"text": cleaned, "rating": rating})
+    return rated_reviews
+
 with open("movies_with_reviews.json", "r", encoding="utf-8") as infile:
     raw_data = json.load(infile)
 
@@ -66,4 +79,9 @@ cleaned_data = preprocess_data(raw_data)
 
 with open("cleaned_movies_with_reviews.json", "w", encoding="utf-8") as outfile:
     json.dump(cleaned_data, outfile, indent=2, ensure_ascii=False)
+
+rated_reviews = extract_rated_reviews(raw_data)
+
+with open("cleaned_rated_movies_with_reviews.json", "w", encoding="utf-8") as outfile:
+    json.dump(rated_reviews, outfile, indent=2, ensure_ascii=False)
     
