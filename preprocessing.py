@@ -1,5 +1,6 @@
 import json
 import re
+from sklearn.model_selection import train_test_split
 
 def clean_review(text):
     
@@ -74,6 +75,10 @@ def extract_rated_reviews(raw_data):
                 rated_reviews.append({"text": cleaned, "rating": rating})
     return rated_reviews
 
+def split_data(rated_data):
+    train_data, test_data = train_test_split(rated_data, test_size=.2, random_state=42)
+    return train_data, test_data
+
 with open("movies_with_reviews.json", "r", encoding="utf-8") as infile:
     raw_data = json.load(infile)
 
@@ -86,4 +91,11 @@ rated_reviews = extract_rated_reviews(raw_data)
 
 with open("cleaned_rated_movies_with_reviews.json", "w", encoding="utf-8") as outfile:
     json.dump(rated_reviews, outfile, indent=2, ensure_ascii=False)
+
+train_data, test_data = split_data(rated_reviews)
+with open("train.json", "w", encoding="utf-8") as train_file:
+    json.dump(train_data, train_file, indent=2, ensure_ascii=False)
+
+with open("test.json", "w", encoding="utf-8") as test_file:
+    json.dump(test_data, test_file, indent=2, ensure_ascii=False)
     
