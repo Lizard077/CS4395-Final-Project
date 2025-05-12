@@ -25,7 +25,20 @@ def clean_review(text):
 
 def extract_rating(text):
     match = re.search(r'rating:\s*([a-fA-F][+-]?)', text, flags=re.IGNORECASE)
-    return match.group(1).upper() if match else None
+    if not match:
+        return None
+    letter = match.group(1).upper()
+
+    if letter.startswith('A'):
+        return 4
+    elif letter.startswith('B'):
+        return 3
+    elif letter.startswith('C'):
+        return 2
+    elif letter.startswith('D'):
+        return 1
+    else:
+        return 0
 
 def preprocess_data(raw_data):
     cleaned_data = []
@@ -39,6 +52,7 @@ def preprocess_data(raw_data):
             cleaned = clean_review(review)
             if cleaned:
                 rating = extract_rating(cleaned)
+                cleaned = re.sub(r'[^\w\s]', '', cleaned)
                 cleaned_reviews.append({"text": cleaned, "rating": rating})
 
         if cleaned_reviews:
